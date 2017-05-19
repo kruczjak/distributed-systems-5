@@ -7,8 +7,8 @@ object ClientStarter extends App {
 
   val clientActor = system.actorOf(Props(classOf[ClientActor]))
   val orderActor = system.actorSelection("akka.tcp://server@127.0.0.1:2553/user/order")
-  val searchActor = null
-  val readBookActor = null
+  val searchActor = system.actorSelection("akka.tcp://server@127.0.0.1:2553/user/search")
+  val readBookActor = system.actorSelection("akka.tcp://server@127.0.0.1:2553/user/read")
 
   while(true) {
     println("Wybierz opcje:")
@@ -19,13 +19,17 @@ object ClientStarter extends App {
     val line = readLine()
 
     if (line.startsWith("1")) {
-
+      println("Podaj fragment tytułu książki:")
+      val fragment = readLine()
+      orderActor.tell(BookSearch(fragment), clientActor)
     } else if (line.startsWith("2")) {
       println("Podaj tytuł książki:")
       val title = readLine()
       orderActor.tell(OrderBook(title), clientActor)
     } else if (line.startsWith("3")) {
-
+      println("Podaj tytuł książki:")
+      val title = readLine()
+      orderActor.tell(ReadBook(title), clientActor)
     }
   }
 }
