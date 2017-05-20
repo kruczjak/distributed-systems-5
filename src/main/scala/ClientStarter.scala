@@ -15,13 +15,14 @@ object ClientStarter extends App {
     println("1. Wyszukaj książkę")
     println("2. Zamów ksiązkę")
     println("3. Czytaj książkę")
+    println("q - quit")
 
     val line = readLine()
 
     if (line.startsWith("1")) {
       println("Podaj fragment tytułu książki:")
       val fragment = readLine()
-      orderActor.tell(BookSearch(fragment), clientActor)
+      searchActor.tell(BookSearch(fragment), clientActor)
     } else if (line.startsWith("2")) {
       println("Podaj tytuł książki:")
       val title = readLine()
@@ -29,7 +30,9 @@ object ClientStarter extends App {
     } else if (line.startsWith("3")) {
       println("Podaj tytuł książki:")
       val title = readLine()
-      orderActor.tell(ReadBook(title), clientActor)
+      readBookActor.tell(ReadBook(title), clientActor)
+    } else if (line.startsWith("q")) {
+      System.exit(0)
     }
   }
 }
