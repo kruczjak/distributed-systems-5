@@ -1,5 +1,6 @@
 import akka.NotUsed
-import akka.actor.Actor
+import akka.actor.SupervisorStrategy.{Restart, Stop}
+import akka.actor.{Actor, OneForOneStrategy, SupervisorStrategy}
 import akka.stream.{ActorMaterializer, OverflowStrategy, ThrottleMode}
 import akka.stream.scaladsl.{Sink, Source}
 
@@ -10,6 +11,10 @@ case class ReadBook(filename: String)
 case class BookLine(line: String)
 
 class ReadBookActor extends Actor {
+  override def supervisorStrategy: SupervisorStrategy = OneForOneStrategy(maxNrOfRetries = 10, withinTimeRange = 1 minute) {
+    case _: Exception => Restart
+  }
+
   override def receive: Receive = {
     case ReadBook(filename) =>
       val materializer = ActorMaterializer.create(context)

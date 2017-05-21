@@ -1,9 +1,9 @@
-import java.io.PrintWriter
+import java.io.FileWriter
 
 class OrdersSaver {
   def addOrder(title: String): Unit = {
     this.synchronized {
-      new PrintWriter("orders.txt") {
+      new FileWriter("orders.txt", true) {
         write(s"$title\n")
         close()
       }

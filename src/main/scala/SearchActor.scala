@@ -1,4 +1,5 @@
-import akka.actor.{Actor, ActorRef, Props}
+import akka.actor.SupervisorStrategy.Restart
+import akka.actor.{Actor, ActorRef, OneForOneStrategy, Props, SupervisorStrategy}
 import akka.pattern.ask
 import akka.util.Timeout
 
@@ -13,6 +14,10 @@ class SearchActor extends Actor {
   import context.dispatcher
   implicit val timeout = Timeout(15 seconds)
   var positionFound = false
+
+  override def supervisorStrategy: SupervisorStrategy = OneForOneStrategy(maxNrOfRetries = 10, withinTimeRange = 1 minute) {
+    case _: Exception => Restart
+  }
 
   override def receive: Receive  = {
     case BookSearch(title) => {
